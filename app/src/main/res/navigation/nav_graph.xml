@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    android:label="Pets"
+    app:startDestination="@id/petsListFragment">
+
+    <fragment
+        android:id="@+id/petsListFragment"
+        android:name="com.yaniv.petfinder.PetsListFragment"
+        android:label="Pets"
+        tools:layout="@layout/fragment_pets_list" />
+    <fragment
+        android:id="@+id/petDetailsFragment"
+        android:name="com.yaniv.petfinder.PetDetailsFragment"
+        android:label="Details"
+        tools:layout="@layout/fragment_pet_details" >
+        <argument
+            android:name="pet"
+            app:argType="com.yaniv.petfinder.model.Pet" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_petDetailsFragment"
+        app:destination="@id/petDetailsFragment"
+        app:enterAnim="@android:anim/slide_in_left"
+        app:exitAnim="@android:anim/slide_out_right"
+        app:popEnterAnim="@anim/slide_in_right"
+        app:popExitAnim="@anim/slide_out_left" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.yaniv.petfinder.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/newPetFragment"
+        android:name="com.yaniv.petfinder.NewPetFragment"
+        android:label="new pet"
+        tools:layout="@layout/fragment_new_pet" /><action android:id="@+id/action_global_newPetFragment" app:destination="@id/newPetFragment"/>
+</navigation>
