@@ -14,16 +14,14 @@ public class User implements Serializable {
     @NonNull
     public String id;
     public String name;
-    public List<Pet> petsToAdopt;
     long lastUpdated;
 
     public User() {
     }
 
-    public User(String id, String name, List<Pet> petsToAdopt) {
+    public User(String id, String name, List<Pet> petsForAdoption) {
         this.id = id;
         this.name = name;
-        this.petsToAdopt = petsToAdopt;
     }
 
     public void setId(@NonNull String id) {
@@ -42,14 +40,6 @@ public class User implements Serializable {
 
     public String getName() {
         return name;
-    }
-
-    public List<Pet> getPetsToAdopt() {
-        return petsToAdopt;
-    }
-
-    public void setPetsToAdopt(List<Pet> petsToAdopt) {
-        this.petsToAdopt = petsToAdopt;
     }
 
     public void setLastUpdated(long lastUpdated) {

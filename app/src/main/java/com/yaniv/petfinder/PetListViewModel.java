@@ -5,17 +5,31 @@ import androidx.lifecycle.ViewModel;
 
 import com.yaniv.petfinder.model.Pet;
 import com.yaniv.petfinder.model.PetModel;
+import com.yaniv.petfinder.model.User;
+import com.yaniv.petfinder.model.UserModel;
 
 import java.util.List;
 
 public class PetListViewModel extends ViewModel {
-    LiveData<List<Pet>> liveData;
+    LiveData<List<Pet>> petsLiveData;
+    LiveData<User> userLiveData;
 
-    public LiveData<List<Pet>> getData() {
-        if (liveData == null) {
-            liveData = PetModel.instance.getAllPets();
+    public LiveData<List<Pet>> getPetsData() {
+        if (petsLiveData == null) {
+            petsLiveData = PetModel.instance.getAllPets();
         }
-        return liveData;
+        return petsLiveData;
+    }
+
+    public LiveData<User> getUserData() {
+        if (userLiveData == null) {
+
+        }
+        return userLiveData;
+    }
+
+    public void login(User user) {
+        userLiveData = UserModel.instance.getUser(user.id);
     }
 
     public void refresh(PetModel.CompListener listener) {

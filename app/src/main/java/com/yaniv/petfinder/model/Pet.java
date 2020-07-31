@@ -14,6 +14,7 @@ public class Pet implements Serializable {
     public String id;
     public String name;
     public String imgUrl;
+    public String ownerId;
     long lastUpdated;
 
     public Pet() {
@@ -56,5 +57,13 @@ public class Pet implements Serializable {
 
     public long getLastUpdated() {
         return lastUpdated;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 }

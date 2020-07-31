@@ -26,9 +26,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.yaniv.petfinder.model.Pet;
 import com.yaniv.petfinder.model.PetModel;
 import com.squareup.picasso.Picasso;
+import com.yaniv.petfinder.model.User;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -43,8 +46,9 @@ public class PetsListFragment extends Fragment {
     PetsListAdapter adapter;
     PetListViewModel viewModel;
     LiveData<List<Pet>> liveData;
+    FirebaseAuth mAuth;
 
-    interface Delegate{
+    interface Delegate {
         void onItemSelected(Pet pet);
     }
 
@@ -66,6 +70,7 @@ public class PetsListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mAuth = FirebaseAuth.getInstance();
         if (context instanceof Delegate) {
             parent = (Delegate) getActivity();
         } else {
@@ -83,6 +88,21 @@ public class PetsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pets_list, container, false);
 
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            ((HomeActivity) parent).navCtrl.navigate(R.id.loginFragment);
+        }
+
+
+//        viewModel.getUserData().observe(getViewLifecycleOwner(), new Observer<User>() {
+//            @Override
+//            public void onChanged(User user) {
+//                if (user.name == null) {
+//                    ((HomeActivity) parent).navCtrl.navigate(R.id.loginFragment);
+//                }
+//            }
+//        });
+
         list = view.findViewById(R.id.pets_list_list);
         list.setHasFixedSize(true);
 
@@ -96,13 +116,13 @@ public class PetsListFragment extends Fragment {
         adapter.setOnIntemClickListener(new OnItemClickListener() {
             @Override
             public void onClick(int position) {
-                Log.d("TAG","row was clicked" + position);
+                Log.d("TAG", "row was clicked" + position);
                 Pet pet = data.get(position);
                 parent.onItemSelected(pet);
             }
         });
 
-        liveData = viewModel.getData();
+        liveData = viewModel.getPetsData();
         liveData.observe(getViewLifecycleOwner(), new Observer<List<Pet>>() {
             @Override
             public void onChanged(List<Pet> pets) {
@@ -132,7 +152,7 @@ public class PetsListFragment extends Fragment {
         parent = null;
     }
 
-    static class PetRowViewHolder extends RecyclerView.ViewHolder{
+    static class PetRowViewHolder extends RecyclerView.ViewHolder {
         TextView name;
         TextView id;
         CheckBox cb;
@@ -155,9 +175,9 @@ public class PetsListFragment extends Fragment {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (listener != null){
+                    if (listener != null) {
                         int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION){
+                        if (position != RecyclerView.NO_POSITION) {
                             listener.onClick(position);
                         }
                     }
@@ -171,22 +191,22 @@ public class PetsListFragment extends Fragment {
             id.setText(st.id);
 //            cb.setChecked(st.isChecked);
             pet = st;
-            if(st.imgUrl != null && st.imgUrl != "") {
+            if (st.imgUrl != null && st.imgUrl != "") {
                 Picasso.get().load(st.imgUrl).placeholder(R.drawable.avatar).into(image);
-            }else{
+            } else {
                 image.setImageResource(R.drawable.avatar);
             }
         }
     }
 
-    interface OnItemClickListener{
+    interface OnItemClickListener {
         void onClick(int position);
     }
 
-    class PetsListAdapter extends RecyclerView.Adapter<PetRowViewHolder>{
+    class PetsListAdapter extends RecyclerView.Adapter<PetRowViewHolder> {
         private OnItemClickListener listener;
 
-        void setOnIntemClickListener(OnItemClickListener listener){
+        void setOnIntemClickListener(OnItemClickListener listener) {
             this.listener = listener;
         }
 
@@ -194,7 +214,7 @@ public class PetsListFragment extends Fragment {
         @NonNull
         @Override
         public PetRowViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            View v = LayoutInflater.from(getActivity()).inflate(R.layout.list_row, viewGroup,false );
+            View v = LayoutInflater.from(getActivity()).inflate(R.layout.list_row, viewGroup, false);
             PetRowViewHolder vh = new PetRowViewHolder(v, listener);
             return vh;
         }
@@ -210,29 +230,30 @@ public class PetsListFragment extends Fragment {
         public int getItemCount() {
             return data.size();
         }
+
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.pets_list_menu,menu);
+        inflater.inflate(R.menu.pets_list_menu, menu);
     }
 
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_pet_list_add:
-                Log.d("TAG","fragment handle add menu");
+                Log.d("TAG", "fragment handle add menu");
                 NavController navCtrl = Navigation.findNavController(list);
                 NavDirections directions = NewPetFragmentDirections.actionGlobalNewPetFragment();
                 navCtrl.navigate(directions);
                 return true;
 
             case R.id.menu_pet_list_info:
-                Log.d("TAG","fragment handle add menu");
-                AlertDialogFragment dialog = AlertDialogFragment.newInstance("Pet App Info","Welcom to the pet app info page...");
-                dialog.show(getParentFragmentManager(),"TAG");
+                Log.d("TAG", "fragment handle add menu");
+                AlertDialogFragment dialog = AlertDialogFragment.newInstance("Pet App Info", "Welcom to the pet app info page...");
+                dialog.show(getParentFragmentManager(), "TAG");
 
                 return true;
         }

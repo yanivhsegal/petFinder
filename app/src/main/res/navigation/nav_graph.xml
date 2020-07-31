@@ -37,4 +37,9 @@
         android:name="com.yaniv.petfinder.NewPetFragment"
         android:label="new pet"
         tools:layout="@layout/fragment_new_pet" /><action android:id="@+id/action_global_newPetFragment" app:destination="@id/newPetFragment"/>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.yaniv.petfinder.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
 </navigation>

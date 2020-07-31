@@ -20,4 +20,7 @@ public interface PetsDao {
 
     @Delete
     void delete(Pet pet);
+
+    @Query("select * from Pet where ownerId = :ownerId")
+    LiveData<List<Pet>> getAllByOwnerId(String ownerId);
 }

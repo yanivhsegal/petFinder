@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#3949ab"
+    tools:context=".LoginFragment">
+
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="178dp"
+        android:layout_height="34dp"
+        android:background="#00227b"
+        android:backgroundTint="#00227b"
+        android:drawableStart="@drawable/googleg_standard_color_18"
+        android:paddingStart="5dp"
+        android:text="@string/common_signin_button_text_long"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.499" />
+</androidx.constraintlayout.widget.ConstraintLayout>
