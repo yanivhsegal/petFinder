@@ -20,7 +20,7 @@ import com.yaniv.petfinder.model.Pet;
 public class PetDetailsFragment extends Fragment {
     private Pet pet;
     TextView name;
-    TextView id;
+    TextView description;
 
     public PetDetailsFragment() {
         // Required empty public constructor
@@ -32,8 +32,8 @@ public class PetDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pet_details, container, false);
 
-        name = view.findViewById(R.id.pet_details_name_tv);
-        id = view.findViewById(R.id.pet_details_id_tv);
+        name = view.findViewById(R.id.pet_details_name);
+        description = view.findViewById(R.id.pet_details_description);
 
         pet = PetDetailsFragmentArgs.fromBundle(getArguments()).getPet();
         if (pet != null){
@@ -53,6 +53,6 @@ public class PetDetailsFragment extends Fragment {
 
     private void update_display() {
         name.setText(pet.name);
-        id.setText(pet.id);
+        description.setText(pet.id);
     }
 }

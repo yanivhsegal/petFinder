@@ -13,6 +13,7 @@ public class Pet implements Serializable {
     @NonNull
     public String id;
     public String name;
+    public String description;
     public String imgUrl;
     public String ownerId;
     long lastUpdated;
@@ -20,10 +21,11 @@ public class Pet implements Serializable {
     public Pet() {
     }
 
-    public Pet(String id, String name, String imgUrl) {
+    public Pet(String id, String name, String imgUrl, String ownerId) {
         this.id = id;
         this.name = name;
         this.imgUrl = imgUrl;
+        this.ownerId = ownerId;
     }
 
     public void setId(@NonNull String id) {
@@ -65,5 +67,13 @@ public class Pet implements Serializable {
 
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

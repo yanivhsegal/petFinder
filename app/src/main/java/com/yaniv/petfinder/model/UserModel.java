@@ -27,20 +27,19 @@ public class UserModel {
     }
 
     @SuppressLint("StaticFieldLeak")
-    public void addUser(User user, Listener<Boolean> listener) {
-//        PetFirebase.addPet(pet, listener);
-//        new AsyncTask<Pet, String, String>() {
-//            @Override
-//            protected String doInBackground(Pet... pets) {
-//                AppLocalDb.db.petDao().insertAll(pets[0]);
-//                return "";
-//            }
-//
-//            @Override
-//            protected void onPostExecute(String s) {
-//                super.onPostExecute(s);
-//            }
-//        }.execute(pet);
+    public void addUser(User user) {
+        new AsyncTask<User, String, String>() {
+            @Override
+            protected String doInBackground(User... user) {
+                AppLocalDb.db.usersDao().insertAll(user[0]);
+                return "";
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+            }
+        }.execute(user);
     }
 
 //    public LiveData<List<User>> getAllPets() {
@@ -49,7 +48,7 @@ public class UserModel {
 //    }
 
 
-    public LiveData<User> getUser(String id) {
+    public User getUser(String id) {
         return AppLocalDb.db.usersDao().getUser(id);
     }
 

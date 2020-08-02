@@ -32,6 +32,7 @@ import com.yaniv.petfinder.model.Pet;
 import com.yaniv.petfinder.model.PetModel;
 import com.squareup.picasso.Picasso;
 import com.yaniv.petfinder.model.User;
+import com.yaniv.petfinder.model.UserModel;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -154,23 +155,19 @@ public class PetsListFragment extends Fragment {
 
     static class PetRowViewHolder extends RecyclerView.ViewHolder {
         TextView name;
-        TextView id;
-        CheckBox cb;
+        TextView description;
         ImageView image;
+        ImageView userImage;
+        TextView userName;
         Pet pet;
 
         public PetRowViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             name = itemView.findViewById(R.id.row_name_tv);
-            id = itemView.findViewById(R.id.row_id_tv);
-//            cb = itemView.findViewById(R.id.row_cb);
+            description = itemView.findViewById(R.id.row_id_tv);
             image = itemView.findViewById(R.id.row_image);
-//            cb.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    pet.isChecked = cb.isChecked();
-//                }
-//            });
+            userImage = itemView.findViewById(R.id.row_user_image);
+            userName = itemView.findViewById(R.id.row_user_name);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -186,13 +183,21 @@ public class PetsListFragment extends Fragment {
 
         }
 
-        public void bind(Pet st) {
-            name.setText(st.name);
-            id.setText(st.id);
-//            cb.setChecked(st.isChecked);
-            pet = st;
-            if (st.imgUrl != null && st.imgUrl != "") {
-                Picasso.get().load(st.imgUrl).placeholder(R.drawable.avatar).into(image);
+        public void bind(Pet pt) {
+            User usr = UserModel.instance.getUser(pt.ownerId);
+
+            name.setText(pt.name);
+            description.setText(pt.description);
+            userName.setText(usr.name);
+
+            if(usr.imageUrl != null && pt.imgUrl != ""){
+                Picasso.get().load(usr.imageUrl).placeholder(R.drawable.avatar).into(userImage);
+            }else{
+                userImage.setImageResource(R.drawable.avatar);
+            }
+            pet = pt;
+            if (pt.imgUrl != null && pt.imgUrl != "") {
+                Picasso.get().load(pt.imgUrl).placeholder(R.drawable.avatar).into(image);
             } else {
                 image.setImageResource(R.drawable.avatar);
             }
@@ -249,12 +254,9 @@ public class PetsListFragment extends Fragment {
                 NavDirections directions = NewPetFragmentDirections.actionGlobalNewPetFragment();
                 navCtrl.navigate(directions);
                 return true;
-
-            case R.id.menu_pet_list_info:
-                Log.d("TAG", "fragment handle add menu");
-                AlertDialogFragment dialog = AlertDialogFragment.newInstance("Pet App Info", "Welcom to the pet app info page...");
-                dialog.show(getParentFragmentManager(), "TAG");
-
+            case R.id.sign_out:
+                FirebaseAuth.getInstance().signOut();
+                ((HomeActivity) parent).navCtrl.navigate(R.id.loginFragment);
                 return true;
         }
         return super.onOptionsItemSelected(item);

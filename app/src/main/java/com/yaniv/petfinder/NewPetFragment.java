@@ -20,6 +20,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.yaniv.petfinder.model.StoreModel;
 import com.yaniv.petfinder.model.Pet;
 import com.yaniv.petfinder.model.PetModel;
@@ -37,12 +38,14 @@ public class NewPetFragment extends Fragment {
     public NewPetFragment() {
         // Required empty public constructor
     }
+
     View view;
     ImageView imgaeView;
     TextView nameTv;
-    TextView idTv;
+    TextView description;
     Bitmap imageBitmap;
     ProgressBar progressbr;
+    FirebaseAuth mAuth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,6 +53,7 @@ public class NewPetFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_new_pet, container, false);
 
+        mAuth = FirebaseAuth.getInstance();
         progressbr = view.findViewById(R.id.new_pet_progress);
         progressbr.setVisibility(View.INVISIBLE);
         imgaeView = view.findViewById(R.id.new_pet_image_v);
@@ -61,7 +65,7 @@ public class NewPetFragment extends Fragment {
             }
         });
         nameTv = view.findViewById(R.id.new_pet_name_tv);
-        idTv = view.findViewById(R.id.new_pet_id_tv);
+        description = view.findViewById(R.id.new_pet_description);
 
         Button saveBtn = view.findViewById(R.id.new_pet_save_btn);
         saveBtn.setOnClickListener(new View.OnClickListener() {
@@ -73,17 +77,17 @@ public class NewPetFragment extends Fragment {
         return view;
     }
 
-    void savePet(){
+    void savePet() {
         progressbr.setVisibility(View.VISIBLE);
         final String name = nameTv.getText().toString();
-        final String id = idTv.getText().toString();
+        final String id = description.getText().toString();
 
         Date d = new Date();
         StoreModel.uploadImage(imageBitmap, "my_photo" + d.getTime(), new StoreModel.Listener() {
             @Override
             public void onSuccess(String url) {
-                Log.d("TAG","url: " + url);
-                Pet st = new Pet(id,name,url);
+                Log.d("TAG", "url: " + url);
+                Pet st = new Pet(id, name, url, mAuth.getCurrentUser().getUid());
                 PetModel.instance.addPet(st, new PetModel.Listener<Boolean>() {
                     @Override
                     public void onComplete(Boolean data) {
@@ -96,7 +100,7 @@ public class NewPetFragment extends Fragment {
             @Override
             public void onFail() {
                 progressbr.setVisibility(View.INVISIBLE);
-                Snackbar mySnackbar = Snackbar.make(view,R.string.fail_to_save_pet, Snackbar.LENGTH_LONG);
+                Snackbar mySnackbar = Snackbar.make(view, R.string.fail_to_save_pet, Snackbar.LENGTH_LONG);
                 mySnackbar.show();
             }
         });
@@ -105,7 +109,7 @@ public class NewPetFragment extends Fragment {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     final static int RESAULT_SUCCESS = 0;
 
-    void takePhoto(){
+    void takePhoto() {
         Intent takePictureIntent = new Intent(
                 MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {

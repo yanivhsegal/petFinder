@@ -14,14 +14,16 @@ public class User implements Serializable {
     @NonNull
     public String id;
     public String name;
+    public String imageUrl;
     long lastUpdated;
 
     public User() {
     }
 
-    public User(String id, String name, List<Pet> petsForAdoption) {
+    public User(String id, String name, String imageUrl) {
         this.id = id;
         this.name = name;
+        this.imageUrl = imageUrl;
     }
 
     public void setId(@NonNull String id) {
@@ -48,5 +50,13 @@ public class User implements Serializable {
 
     public long getLastUpdated() {
         return lastUpdated;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

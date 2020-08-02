@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_pet_list_info"
-        android:icon="@android:drawable/ic_dialog_info"
-        android:title="info"
-        app:showAsAction="always" />
+        android:id="@+id/sign_out"
+        android:icon="@drawable/signout"
+        android:title="log out"
+        app:showAsAction="withText" />
     <item
         android:id="@+id/menu_pet_list_add"
         android:icon="@android:drawable/ic_input_add"
         android:title="Add"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>

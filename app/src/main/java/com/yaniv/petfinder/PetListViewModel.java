@@ -28,10 +28,6 @@ public class PetListViewModel extends ViewModel {
         return userLiveData;
     }
 
-    public void login(User user) {
-        userLiveData = UserModel.instance.getUser(user.id);
-    }
-
     public void refresh(PetModel.CompListener listener) {
         PetModel.instance.refreshPetList(listener);
     }

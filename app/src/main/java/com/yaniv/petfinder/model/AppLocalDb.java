@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase;
 
 import com.yaniv.petfinder.MyApplication;
 
-@Database(entities = {Pet.class, User.class}, version = 11)
+@Database(entities = {Pet.class, User.class}, version = 12)
 abstract class AppLocalDbRepository extends RoomDatabase {
     public abstract PetsDao petDao();
     public abstract UsersDao usersDao();

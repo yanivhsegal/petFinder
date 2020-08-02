@@ -29,6 +29,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.yaniv.petfinder.model.User;
+import com.yaniv.petfinder.model.UserModel;
 
 import java.util.Objects;
 import java.util.concurrent.Executor;
@@ -102,13 +104,20 @@ public class LoginFragment extends Fragment {
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            UserModel.instance.addUser(new User(
+                                    user.getUid(),
+                                    user.getDisplayName(),
+                                    user.getPhotoUrl().toString()));
+                            NavController navCtrl = Navigation.findNavController(view);
+                            navCtrl.popBackStack();
+
                             //TODO: updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
