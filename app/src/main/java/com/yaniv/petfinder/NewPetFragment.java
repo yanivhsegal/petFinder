@@ -87,8 +87,8 @@ public class NewPetFragment extends Fragment {
             @Override
             public void onSuccess(String url) {
                 Log.d("TAG", "url: " + url);
-                Pet st = new Pet(id, name, url, mAuth.getCurrentUser().getUid());
-                PetModel.instance.addPet(st, new PetModel.Listener<Boolean>() {
+                Pet pt = new Pet(id, name, url, mAuth.getCurrentUser().getUid());
+                PetModel.instance.addPet(pt, new PetModel.Listener<Boolean>() {
                     @Override
                     public void onComplete(Boolean data) {
                         NavController navCtrl = Navigation.findNavController(view);

@@ -1,7 +1,9 @@
 package com.yaniv.petfinder;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -183,18 +185,28 @@ public class PetsListFragment extends Fragment {
 
         }
 
+        @SuppressLint("StaticFieldLeak")
         public void bind(Pet pt) {
-            User usr = UserModel.instance.getUser(pt.ownerId);
+
+            new AsyncTask<String, String, User>() {
+                @Override
+                protected User doInBackground(String... strings) {
+                    User usr = UserModel.instance.getUser(strings[0]);
+                    if (usr != null) {
+                        userName.setText(usr.name);
+
+                        if (usr.imageUrl != null && usr.imageUrl != "") {
+                            Picasso.get().load(usr.imageUrl).placeholder(R.drawable.avatar).into(userImage);
+                        } else {
+                            userImage.setImageResource(R.drawable.avatar);
+                        }
+                    }
+                    return usr;
+                }
+            }.execute(pt.ownerId);
 
             name.setText(pt.name);
             description.setText(pt.description);
-            userName.setText(usr.name);
-
-            if(usr.imageUrl != null && pt.imgUrl != ""){
-                Picasso.get().load(usr.imageUrl).placeholder(R.drawable.avatar).into(userImage);
-            }else{
-                userImage.setImageResource(R.drawable.avatar);
-            }
             pet = pt;
             if (pt.imgUrl != null && pt.imgUrl != "") {
                 Picasso.get().load(pt.imgUrl).placeholder(R.drawable.avatar).into(image);
