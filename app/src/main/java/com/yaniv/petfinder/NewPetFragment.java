@@ -26,6 +26,7 @@ import com.yaniv.petfinder.model.Pet;
 import com.yaniv.petfinder.model.PetModel;
 
 import java.util.Date;
+import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -80,14 +81,14 @@ public class NewPetFragment extends Fragment {
     void savePet() {
         progressbr.setVisibility(View.VISIBLE);
         final String name = nameTv.getText().toString();
-        final String id = description.getText().toString();
+        final String desc = description.getText().toString();
 
         Date d = new Date();
         StoreModel.uploadImage(imageBitmap, "my_photo" + d.getTime(), new StoreModel.Listener() {
             @Override
             public void onSuccess(String url) {
                 Log.d("TAG", "url: " + url);
-                Pet pt = new Pet(id, name, url, mAuth.getCurrentUser().getUid());
+                Pet pt = new Pet(UUID.randomUUID().toString(), name, url, desc, mAuth.getCurrentUser().getUid());
                 PetModel.instance.addPet(pt, new PetModel.Listener<Boolean>() {
                     @Override
                     public void onComplete(Boolean data) {
@@ -100,8 +101,8 @@ public class NewPetFragment extends Fragment {
             @Override
             public void onFail() {
                 progressbr.setVisibility(View.INVISIBLE);
-                Snackbar mySnackbar = Snackbar.make(view, R.string.fail_to_save_pet, Snackbar.LENGTH_LONG);
-                mySnackbar.show();
+                Snackbar mySnackBar = Snackbar.make(view, R.string.fail_to_save_pet, Snackbar.LENGTH_LONG);
+                mySnackBar.show();
             }
         });
     }

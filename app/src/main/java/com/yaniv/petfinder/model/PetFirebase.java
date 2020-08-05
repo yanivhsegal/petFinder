@@ -22,22 +22,22 @@ public class PetFirebase {
 
     public static void getAllPetsSince(long since, final PetModel.Listener<List<Pet>> listener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Timestamp ts = new Timestamp(since,0);
+        Timestamp ts = new Timestamp(since, 0);
         db.collection(PET_COLLECTION).whereGreaterThanOrEqualTo("lastUpdated", ts)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 List<Pet> stData = null;
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     stData = new LinkedList<Pet>();
-                    for(QueryDocumentSnapshot doc : task.getResult()){
+                    for (QueryDocumentSnapshot doc : task.getResult()) {
                         Map<String, Object> json = doc.getData();
                         Pet pet = factory(json);
                         stData.add(pet);
                     }
                 }
                 listener.onComplete(stData);
-                Log.d("TAG","refresh " + stData.size());
+                Log.d("TAG", "refresh " + stData.size());
             }
         });
     }
@@ -48,9 +48,9 @@ public class PetFirebase {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 List<Pet> stData = null;
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     stData = new LinkedList<Pet>();
-                    for(QueryDocumentSnapshot doc : task.getResult()){
+                    for (QueryDocumentSnapshot doc : task.getResult()) {
                         Pet pet = doc.toObject(Pet.class);
                         stData.add(pet);
                     }
@@ -65,28 +65,32 @@ public class PetFirebase {
         db.collection(PET_COLLECTION).document(pet.getId()).set(toJson(pet)).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (listener!=null){
+                if (listener != null) {
                     listener.onComplete(task.isSuccessful());
                 }
             }
         });
     }
 
-    private static Pet factory(Map<String, Object> json){
-        Pet st = new Pet();
-        st.id = (String)json.get("id");
-        st.name = (String)json.get("name");
-        st.imgUrl = (String)json.get("imgUrl");
-        Timestamp ts = (Timestamp)json.get("lastUpdated");
-        if (ts != null) st.lastUpdated = ts.getSeconds();
-        return st;
+    private static Pet factory(Map<String, Object> json) {
+        Pet pet = new Pet();
+        pet.id = (String) json.get("id");
+        pet.name = (String) json.get("name");
+        pet.imgUrl = (String) json.get("imgUrl");
+        pet.description = (String) json.get("description");
+        pet.ownerId = (String) json.get("ownerId");
+        Timestamp ts = (Timestamp) json.get("lastUpdated");
+        if (ts != null) pet.lastUpdated = ts.getSeconds();
+        return pet;
     }
 
-    private static Map<String, Object> toJson(Pet st){
+    private static Map<String, Object> toJson(Pet pt) {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("id", st.id);
-        result.put("name", st.name);
-        result.put("imgUrl", st.imgUrl);
+        result.put("id", pt.id);
+        result.put("name", pt.name);
+        result.put("imgUrl", pt.imgUrl);
+        result.put("description", pt.description);
+        result.put("ownerId", pt.ownerId);
         result.put("lastUpdated", FieldValue.serverTimestamp());
         return result;
     }

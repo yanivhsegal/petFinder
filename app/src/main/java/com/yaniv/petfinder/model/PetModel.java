@@ -83,6 +83,12 @@ public class PetModel {
         return liveData;
     }
 
+    public LiveData<List<Pet>> getAllMyPets(String id) {
+        LiveData<List<Pet>> liveData = AppLocalDb.db.petDao().getAllByOwnerId(id);
+        refreshPetList(null);
+        return liveData;
+    }
+
 
     public Pet getPet(String id) {
         return null;

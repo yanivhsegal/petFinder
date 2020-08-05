@@ -12,11 +12,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -50,9 +51,15 @@ public class PetsListFragment extends Fragment {
     PetListViewModel viewModel;
     LiveData<List<Pet>> liveData;
     FirebaseAuth mAuth;
+    FirebaseUser currentUser;
+    boolean isPetsManagement;
 
     interface Delegate {
         void onItemSelected(Pet pet);
+
+        void onManageMyPets();
+
+        void onSignOut();
     }
 
     Delegate parent;
@@ -74,6 +81,11 @@ public class PetsListFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mAuth = FirebaseAuth.getInstance();
+        try {
+            isPetsManagement = PetsListFragmentArgs.fromBundle(getArguments()).getIsPetManagement();
+        } catch (Exception e) {
+            isPetsManagement = false;
+        }
         if (context instanceof Delegate) {
             parent = (Delegate) getActivity();
         } else {
@@ -90,8 +102,8 @@ public class PetsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pets_list, container, false);
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             ((HomeActivity) parent).navCtrl.navigate(R.id.loginFragment);
         }
@@ -113,7 +125,7 @@ public class PetsListFragment extends Fragment {
         list.setLayoutManager(layoutManager);
 
 
-        adapter = new PetsListAdapter();
+        adapter = new PetsListAdapter(isPetsManagement);
         list.setAdapter(adapter);
 
         adapter.setOnIntemClickListener(new OnItemClickListener() {
@@ -125,7 +137,8 @@ public class PetsListFragment extends Fragment {
             }
         });
 
-        liveData = viewModel.getPetsData();
+        liveData = viewModel.getPetsData(isPetsManagement, currentUser != null ? currentUser.getUid() : "");
+
         liveData.observe(getViewLifecycleOwner(), new Observer<List<Pet>>() {
             @Override
             public void onChanged(List<Pet> pets) {
@@ -161,15 +174,17 @@ public class PetsListFragment extends Fragment {
         ImageView image;
         ImageView userImage;
         TextView userName;
+        ImageView delete;
         Pet pet;
 
         public PetRowViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             name = itemView.findViewById(R.id.row_name_tv);
-            description = itemView.findViewById(R.id.row_id_tv);
+            description = itemView.findViewById(R.id.row_description_tv);
             image = itemView.findViewById(R.id.row_image);
             userImage = itemView.findViewById(R.id.row_user_image);
             userName = itemView.findViewById(R.id.row_user_name);
+            delete  = itemView.findViewById(R.id.row_delete);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -182,28 +197,43 @@ public class PetsListFragment extends Fragment {
                     }
                 }
             });
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
+                }
+            });
         }
 
         @SuppressLint("StaticFieldLeak")
-        public void bind(Pet pt) {
+        public void bind(Pet pt, Boolean isPetsManagement) {
+
+            if(!isPetsManagement){
+                delete.setVisibility(View.GONE);
+            }
 
             new AsyncTask<String, String, User>() {
                 @Override
                 protected User doInBackground(String... strings) {
                     User usr = UserModel.instance.getUser(strings[0]);
-                    if (usr != null) {
-                        userName.setText(usr.name);
+                    return usr;
+                }
 
-                        if (usr.imageUrl != null && usr.imageUrl != "") {
-                            Picasso.get().load(usr.imageUrl).placeholder(R.drawable.avatar).into(userImage);
+                @Override
+                protected void onPostExecute(User user) {
+                    super.onPostExecute(user);
+                    if (user != null) {
+                        userName.setText(user.name);
+
+                        if (user.imageUrl != null && user.imageUrl != "") {
+                            Picasso.get().load(user.imageUrl).placeholder(R.drawable.avatar).into(userImage);
                         } else {
                             userImage.setImageResource(R.drawable.avatar);
                         }
                     }
-                    return usr;
                 }
             }.execute(pt.ownerId);
+
 
             name.setText(pt.name);
             description.setText(pt.description);
@@ -222,6 +252,14 @@ public class PetsListFragment extends Fragment {
 
     class PetsListAdapter extends RecyclerView.Adapter<PetRowViewHolder> {
         private OnItemClickListener listener;
+        private Boolean isPetsManagement = false;
+
+        public PetsListAdapter() {
+        }
+
+        public PetsListAdapter(Boolean isPetsManagement) {
+            this.isPetsManagement = isPetsManagement;
+        }
 
         void setOnIntemClickListener(OnItemClickListener listener) {
             this.listener = listener;
@@ -238,16 +276,14 @@ public class PetsListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull PetRowViewHolder petRowViewHolder, int i) {
-            Pet st = data.get(i);
-            petRowViewHolder.bind(st);
-
+            Pet pt = data.get(i);
+            petRowViewHolder.bind(pt, isPetsManagement);
         }
 
         @Override
         public int getItemCount() {
             return data.size();
         }
-
     }
 
     @Override
@@ -268,7 +304,10 @@ public class PetsListFragment extends Fragment {
                 return true;
             case R.id.sign_out:
                 FirebaseAuth.getInstance().signOut();
-                ((HomeActivity) parent).navCtrl.navigate(R.id.loginFragment);
+                parent.onSignOut();
+                return true;
+            case R.id.manage_pets:
+                parent.onManageMyPets();
                 return true;
         }
         return super.onOptionsItemSelected(item);

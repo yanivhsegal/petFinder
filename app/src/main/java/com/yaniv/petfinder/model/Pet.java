@@ -21,10 +21,11 @@ public class Pet implements Serializable {
     public Pet() {
     }
 
-    public Pet(String id, String name, String imgUrl, String ownerId) {
+    public Pet(String id, String name, String imgUrl, String description, String ownerId) {
         this.id = id;
         this.name = name;
         this.imgUrl = imgUrl;
+        this.description = description;
         this.ownerId = ownerId;
     }
 

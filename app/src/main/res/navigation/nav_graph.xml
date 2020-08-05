@@ -10,7 +10,19 @@
         android:id="@+id/petsListFragment"
         android:name="com.yaniv.petfinder.PetsListFragment"
         android:label="Pets"
-        tools:layout="@layout/fragment_pets_list" />
+        tools:layout="@layout/fragment_pets_list">
+        <argument
+            android:name="isPetManagement"
+            app:argType="java.lang.Boolean" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_petsListFragment"
+        app:destination="@id/petsListFragment"
+        app:enterAnim="@android:anim/slide_in_left"
+        app:exitAnim="@android:anim/slide_out_right"
+        app:popEnterAnim="@anim/slide_in_right"
+        app:popExitAnim="@anim/slide_out_left" >
+    </action>
     <fragment
         android:id="@+id/petDetailsFragment"
         android:name="com.yaniv.petfinder.PetDetailsFragment"

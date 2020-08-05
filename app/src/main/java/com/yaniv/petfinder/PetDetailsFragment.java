@@ -5,12 +5,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.squareup.picasso.Picasso;
 import com.yaniv.petfinder.model.Pet;
 
 
@@ -21,6 +23,7 @@ public class PetDetailsFragment extends Fragment {
     private Pet pet;
     TextView name;
     TextView description;
+    ImageView petPhoto;
 
     public PetDetailsFragment() {
         // Required empty public constructor
@@ -34,6 +37,7 @@ public class PetDetailsFragment extends Fragment {
 
         name = view.findViewById(R.id.pet_details_name);
         description = view.findViewById(R.id.pet_details_description);
+        petPhoto = view.findViewById(R.id.pet_photo);
 
         pet = PetDetailsFragmentArgs.fromBundle(getArguments()).getPet();
         if (pet != null){
@@ -53,6 +57,11 @@ public class PetDetailsFragment extends Fragment {
 
     private void update_display() {
         name.setText(pet.name);
-        description.setText(pet.id);
+        description.setText(pet.description);
+        if (pet.imgUrl != null && pet.imgUrl != "") {
+            Picasso.get().load(pet.imgUrl).placeholder(R.drawable.avatar).into(petPhoto);
+        } else {
+            petPhoto.setImageResource(R.drawable.avatar);
+        }
     }
 }

@@ -12,13 +12,21 @@ import java.util.List;
 
 public class PetListViewModel extends ViewModel {
     LiveData<List<Pet>> petsLiveData;
+    LiveData<List<Pet>> myPetsLiveData;
     LiveData<User> userLiveData;
 
-    public LiveData<List<Pet>> getPetsData() {
-        if (petsLiveData == null) {
-            petsLiveData = PetModel.instance.getAllPets();
+    public LiveData<List<Pet>> getPetsData(boolean isPetsManagement, String ownerId) {
+        if(!isPetsManagement) {
+            if (petsLiveData == null) {
+                petsLiveData = PetModel.instance.getAllPets();
+            }
+            return petsLiveData;
+        }else{
+            if (myPetsLiveData == null) {
+                myPetsLiveData = PetModel.instance.getAllMyPets(ownerId);
+            }
+            return myPetsLiveData;
         }
-        return petsLiveData;
     }
 
     public LiveData<User> getUserData() {

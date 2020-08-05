@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -22,39 +23,37 @@ public class HomeActivity extends AppCompatActivity implements PetsListFragment.
         setContentView(R.layout.activity_home);
 
         navCtrl = Navigation.findNavController(this, R.id.home_nav_host);
-        NavigationUI.setupActionBarWithNavController(this,navCtrl);
-
-
-//        BottomNavigationView bottomNav = findViewById(R.id.home_bottom_nav);
-//        NavigationUI.setupWithNavController(bottomNav,navCtrl);
+        NavigationUI.setupActionBarWithNavController(this, navCtrl);
     }
 
     @Override
     public void onItemSelected(Pet pet) {
-        NavController navCtrl = Navigation.findNavController(this, R.id.home_nav_host);
-//        NavDirections direction = PetsListFragmentDirections.actionPetsListFragmentToPetDetailsFragment();
-//        navCtrl.navigate(direction);
-//        navCtrl.navigate(R.id.action_petsListFragment_to_petDetailsFragment);
-
-//        PetsListFragmentDirections.ActionPetsListFragmentToPetDetailsFragment directions = PetsListFragmentDirections.actionPetsListFragmentToPetDetailsFragment(pet);
-//        navCtrl.navigate(directions);
-
+//        NavController navCtrl = Navigation.findNavController(this, R.id.home_nav_host);
         NavGraphDirections.ActionGlobalPetDetailsFragment direction = PetsListFragmentDirections.actionGlobalPetDetailsFragment(pet);
         navCtrl.navigate(direction);
-
     }
 
+    @Override
+    public void onSignOut() {
+        navCtrl.navigate(R.id.loginFragment);
+    }
+
+    @Override
+    public void onManageMyPets() {
+        NavGraphDirections.ActionGlobalPetsListFragment direction = PetsListFragmentDirections.actionGlobalPetsListFragment(true);
+        navCtrl.navigate(direction);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-       // getMenuInflater().inflate(R.menu.pets_list_menu,menu);
+        // getMenuInflater().inflate(R.menu.pets_list_menu,menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 navCtrl.navigateUp();
                 return true;
