@@ -13,7 +13,6 @@ import java.util.List;
 public class PetListViewModel extends ViewModel {
     LiveData<List<Pet>> petsLiveData;
     LiveData<List<Pet>> myPetsLiveData;
-    LiveData<User> userLiveData;
 
     public LiveData<List<Pet>> getPetsData(boolean isPetsManagement, String ownerId) {
         if(!isPetsManagement) {
@@ -29,11 +28,8 @@ public class PetListViewModel extends ViewModel {
         }
     }
 
-    public LiveData<User> getUserData() {
-        if (userLiveData == null) {
-
-        }
-        return userLiveData;
+    public void deleteById(String petId){
+        PetModel.instance.deleteById(petId);
     }
 
     public void refresh(PetModel.CompListener listener) {

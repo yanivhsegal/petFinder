@@ -99,7 +99,6 @@ public class LoginFragment extends Fragment {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            //TODO: when user not fount too
             NavController navCtrl = Navigation.findNavController(view);
             navCtrl.popBackStack();
         }
@@ -122,6 +121,10 @@ public class LoginFragment extends Fragment {
                                     user.getPhotoUrl().toString()));
                             NavController navCtrl = Navigation.findNavController(view);
                             navCtrl.popBackStack();
+                            navCtrl.navigate(LoginFragmentDirections.actionGlobalPetsListFragment(false));
+//                            navCtrl.navigate(LoginFragmentDirections.actionLoginFragmentToPetsListFragment(false));
+//                            LoginFragmentDirections.actionLoginFragmentToPetDetailsFragment() .actionGlobalPetsListFragment(false);
+//                            navCtrl.navigate(direction);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("TAG", "signInWithCredential:failure", task.getException());
@@ -136,10 +139,10 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_login, container, false);
-        savedStateHandle = Navigation.findNavController(getParentFragment().requireView())
-                .getPreviousBackStackEntry()
-                .getSavedStateHandle();
-        savedStateHandle.set("LOGIN_SUCCESSFUL", false);
+//        savedStateHandle = Navigation.findNavController(getParentFragment().requireView())
+//                .getPreviousBackStackEntry()
+//                .getSavedStateHandle();
+//        savedStateHandle.set("LOGIN_SUCCESSFUL", false);
 
 
         Button takePhBtn = view.findViewById(R.id.loginButton);

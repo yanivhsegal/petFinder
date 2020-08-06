@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -105,7 +106,7 @@ public class PetsListFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
-            ((HomeActivity) parent).navCtrl.navigate(R.id.loginFragment);
+            ((HomeActivity) parent).navCtrl.navigate(PetsListFragmentDirections.actionPetsListFragmentToLoginFragment());
         }
 
 
@@ -176,15 +177,17 @@ public class PetsListFragment extends Fragment {
         TextView userName;
         ImageView delete;
         Pet pet;
+        FragmentManager parentFragmentManager;
 
-        public PetRowViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
+        public PetRowViewHolder(@NonNull final View itemView, final OnItemClickListener listener, final FragmentManager parentFragmentManager) {
             super(itemView);
             name = itemView.findViewById(R.id.row_name_tv);
             description = itemView.findViewById(R.id.row_description_tv);
             image = itemView.findViewById(R.id.row_image);
             userImage = itemView.findViewById(R.id.row_user_image);
             userName = itemView.findViewById(R.id.row_user_name);
-            delete  = itemView.findViewById(R.id.row_delete);
+            delete = itemView.findViewById(R.id.row_delete);
+            this.parentFragmentManager = parentFragmentManager;
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -197,19 +200,22 @@ public class PetsListFragment extends Fragment {
                     }
                 }
             });
-            delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
         }
 
         @SuppressLint("StaticFieldLeak")
-        public void bind(Pet pt, Boolean isPetsManagement) {
+        public void bind(final Pet pt, Boolean isPetsManagement) {
 
-            if(!isPetsManagement){
+            if (!isPetsManagement) {
                 delete.setVisibility(View.GONE);
+            } else {
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d("TAG", "fragment handle add menu");
+                        AlertDialogFragment dialog = AlertDialogFragment.newInstance("Delete post", "Are you sure you want to delete post?", pt.id);
+                        dialog.show(parentFragmentManager, "TAG");
+                    }
+                });
             }
 
             new AsyncTask<String, String, User>() {
@@ -270,7 +276,7 @@ public class PetsListFragment extends Fragment {
         @Override
         public PetRowViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
             View v = LayoutInflater.from(getActivity()).inflate(R.layout.list_row, viewGroup, false);
-            PetRowViewHolder vh = new PetRowViewHolder(v, listener);
+            PetRowViewHolder vh = new PetRowViewHolder(v, listener, getParentFragmentManager());
             return vh;
         }
 

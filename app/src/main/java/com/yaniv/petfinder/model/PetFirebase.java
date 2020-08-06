@@ -72,6 +72,12 @@ public class PetFirebase {
         });
     }
 
+    public static void deletePet(String petId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(PET_COLLECTION).document(petId).delete();
+    }
+
+
     private static Pet factory(Map<String, Object> json) {
         Pet pet = new Pet();
         pet.id = (String) json.get("id");

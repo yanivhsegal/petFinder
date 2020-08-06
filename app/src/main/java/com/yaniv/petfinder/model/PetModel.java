@@ -98,8 +98,16 @@ public class PetModel {
 
     }
 
-    public void delete(Pet pet) {
-
+    @SuppressLint("StaticFieldLeak")
+    public void deleteById(String petId) {
+        PetFirebase.deletePet(petId);
+        new AsyncTask<String, String, String>() {
+            @Override
+            protected String doInBackground(String... petIds) {
+                AppLocalDb.db.petDao().deleteById(petIds[0]);
+                return "";
+            }
+        }.execute(petId);
     }
 
 

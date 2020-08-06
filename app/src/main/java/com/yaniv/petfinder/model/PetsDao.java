@@ -21,6 +21,9 @@ public interface PetsDao {
     @Delete
     void delete(Pet pet);
 
+    @Query("Delete from Pet where id = :petId")
+    void deleteById(String petId);
+
     @Query("select * from Pet where ownerId = :ownerId")
     LiveData<List<Pet>> getAllByOwnerId(String ownerId);
 }
