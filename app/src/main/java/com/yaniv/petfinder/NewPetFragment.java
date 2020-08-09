@@ -3,6 +3,7 @@ package com.yaniv.petfinder;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -21,11 +22,15 @@ import androidx.navigation.Navigation;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 import com.yaniv.petfinder.model.StoreModel;
 import com.yaniv.petfinder.model.Pet;
 import com.yaniv.petfinder.model.PetModel;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
@@ -40,11 +45,12 @@ public class NewPetFragment extends Fragment {
         // Required empty public constructor
     }
 
+    Pet pet;
     View view;
     ImageView imgaeView;
     TextView nameTv;
     TextView description;
-    Bitmap imageBitmap;
+    List<Bitmap> imageBitmap = new ArrayList<>();
     ProgressBar progressbr;
     FirebaseAuth mAuth;
 
@@ -54,6 +60,7 @@ public class NewPetFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_new_pet, container, false);
 
+        pet = NewPetFragmentArgs.fromBundle(getArguments()).getPet();
         mAuth = FirebaseAuth.getInstance();
         progressbr = view.findViewById(R.id.new_pet_progress);
         progressbr.setVisibility(View.INVISIBLE);
@@ -62,7 +69,7 @@ public class NewPetFragment extends Fragment {
         takePhBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takePhoto();
+                uploadFromGallery();
             }
         });
         nameTv = view.findViewById(R.id.new_pet_name_tv);
@@ -75,6 +82,15 @@ public class NewPetFragment extends Fragment {
                 savePet();
             }
         });
+
+        if (pet != null) {
+            nameTv.setText(pet.name);
+            description.setText(pet.description);
+            if (pet.imgUrl != null && pet.imgUrl != "") {
+                Picasso.get().load(pet.imgUrl).placeholder(R.drawable.avatar).into(imgaeView);
+            }
+        }
+
         return view;
     }
 
@@ -82,33 +98,54 @@ public class NewPetFragment extends Fragment {
         progressbr.setVisibility(View.VISIBLE);
         final String name = nameTv.getText().toString();
         final String desc = description.getText().toString();
-
+        final String id = pet != null && !pet.getId().equals("") ? pet.getId() : UUID.randomUUID().toString();
         Date d = new Date();
-        StoreModel.uploadImage(imageBitmap, "my_photo" + d.getTime(), new StoreModel.Listener() {
-            @Override
-            public void onSuccess(String url) {
-                Log.d("TAG", "url: " + url);
-                Pet pt = new Pet(UUID.randomUUID().toString(), name, url, desc, mAuth.getCurrentUser().getUid());
-                PetModel.instance.addPet(pt, new PetModel.Listener<Boolean>() {
-                    @Override
-                    public void onComplete(Boolean data) {
-                        NavController navCtrl = Navigation.findNavController(view);
-                        navCtrl.navigateUp();
-                    }
-                });
-            }
+        if (imageBitmap != null) {
+            StoreModel.uploadImages(imageBitmap, "my_photo" + d.getTime(), new StoreModel.Listener() {
+                @Override
+                public void onSuccess(String url) {
+                    Log.d("TAG", "url: " + url);
+                    Pet pt = new Pet(id, name, url, desc, mAuth.getCurrentUser().getUid());
+                    PetModel.instance.addPet(pt, new PetModel.Listener<Boolean>() {
+                        @Override
+                        public void onComplete(Boolean data) {
+                            NavController navCtrl = Navigation.findNavController(view);
+                            navCtrl.navigateUp();
+                        }
+                    });
+                }
 
-            @Override
-            public void onFail() {
-                progressbr.setVisibility(View.INVISIBLE);
-                Snackbar mySnackBar = Snackbar.make(view, R.string.fail_to_save_pet, Snackbar.LENGTH_LONG);
-                mySnackBar.show();
-            }
-        });
+                @Override
+                public void onFail() {
+                    progressbr.setVisibility(View.INVISIBLE);
+                    Snackbar mySnackBar = Snackbar.make(view, R.string.fail_to_save_pet, Snackbar.LENGTH_LONG);
+                    mySnackBar.show();
+                }
+            });
+        } else {
+            Pet pt = new Pet(id, name, pet.imgUrl, desc, mAuth.getCurrentUser().getUid());
+            PetModel.instance.addPet(pt, new PetModel.Listener<Boolean>() {
+                @Override
+                public void onComplete(Boolean data) {
+                    NavController navCtrl = Navigation.findNavController(view);
+                    navCtrl.navigateUp();
+                }
+            });
+        }
     }
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     final static int RESAULT_SUCCESS = 0;
+
+    void uploadFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        String[] extraMimeTypes = {"image/*"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+    }
 
     void takePhoto() {
         Intent takePictureIntent = new Intent(
@@ -118,15 +155,31 @@ public class NewPetFragment extends Fragment {
         }
     }
 
-    //    private Bitmap imageBitmap;
-//    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        List<Uri> imagesUri = new ArrayList<>();
         if (requestCode == REQUEST_IMAGE_CAPTURE &&
                 resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            imageBitmap = rotateImage((Bitmap) extras.get("data"));
-            imgaeView.setImageBitmap(imageBitmap);
+            if (data.getExtras() != null) {
+                Bundle extras = data.getExtras();
+                imageBitmap.add(rotateImage((Bitmap) extras.get("data")));
+            } else if (data.getClipData() != null) {
+                for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                    imagesUri.add(data.getClipData().getItemAt(i).getUri());
+                }
+            } else if (data.getData() != null) {
+                imagesUri.add(data.getData());
+            }
+
+            for (Uri imageUri : imagesUri) {
+                try {
+                    imageBitmap.add(MediaStore.Images.Media.getBitmap(view.getContext().getContentResolver(), imageUri));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            imgaeView.setImageBitmap(imageBitmap.get(0));
         }
     }
 

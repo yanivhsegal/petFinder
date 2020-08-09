@@ -6,37 +6,13 @@
     android:label="Pets"
     app:startDestination="@id/petsListFragment">
 
-    <fragment
-        android:id="@+id/petsListFragment"
-        android:name="com.yaniv.petfinder.PetsListFragment"
-        android:label="Pets"
-        tools:layout="@layout/fragment_pets_list">
-        <argument
-            android:name="isPetManagement"
-            app:argType="java.lang.Boolean" />
-        <action
-            android:id="@+id/action_petsListFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true"
-            />
-    </fragment>
     <action
         android:id="@+id/action_global_petsListFragment"
         app:destination="@id/petsListFragment"
         app:enterAnim="@android:anim/slide_in_left"
         app:exitAnim="@android:anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
-        app:popExitAnim="@anim/slide_out_left"/>
-    <fragment
-        android:id="@+id/petDetailsFragment"
-        android:name="com.yaniv.petfinder.PetDetailsFragment"
-        android:label="Details"
-        tools:layout="@layout/fragment_pet_details">
-        <argument
-            android:name="pet"
-            app:argType="com.yaniv.petfinder.model.Pet" />
-    </fragment>
+        app:popExitAnim="@anim/slide_out_left" />
     <action
         android:id="@+id/action_global_petDetailsFragment"
         app:destination="@id/petDetailsFragment"
@@ -44,6 +20,23 @@
         app:exitAnim="@android:anim/slide_out_right"
         app:popEnterAnim="@anim/slide_in_right"
         app:popExitAnim="@anim/slide_out_left" />
+    <action
+        android:id="@+id/action_global_newPetFragment"
+        app:destination="@id/newPetFragment" />
+    <fragment
+        android:id="@+id/petsListFragment"
+        android:name="com.yaniv.petfinder.PetsListFragment"
+        android:label="Pets"
+        tools:layout="@layout/fragment_pets_list">
+        <action
+            android:id="@+id/action_petsListFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="isPetManagement"
+            app:argType="java.lang.Boolean" />
+    </fragment>
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.yaniv.petfinder.HomeFragment"
@@ -53,13 +46,24 @@
         android:id="@+id/newPetFragment"
         android:name="com.yaniv.petfinder.NewPetFragment"
         android:label="new pet"
-        tools:layout="@layout/fragment_new_pet" />
-    <action
-        android:id="@+id/action_global_newPetFragment"
-        app:destination="@id/newPetFragment" />
+        tools:layout="@layout/fragment_new_pet">
+        <argument
+            android:name="pet"
+            app:nullable="true"
+            app:argType="com.yaniv.petfinder.model.Pet" />
+    </fragment>
+    <fragment
+        android:id="@+id/petDetailsFragment"
+        android:name="com.yaniv.petfinder.PetDetailsFragment"
+        android:label="Details"
+        tools:layout="@layout/fragment_pet_details">
+        <argument
+            android:name="pet"
+            app:argType="com.yaniv.petfinder.model.Pet" />
+    </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.yaniv.petfinder.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login"/>
+        tools:layout="@layout/fragment_login" />
 </navigation>

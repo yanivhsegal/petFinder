@@ -60,28 +60,4 @@ public class HomeActivity extends AppCompatActivity implements PetsListFragment.
         }
         return super.onOptionsItemSelected(item);
     }
-
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    final static int RESAULT_SUCCESS = 0;
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(
-                MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
-
-//    private Bitmap imageBitmap;
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_IMAGE_CAPTURE &&
-//                resultCode == RESULT_OK) {
-//            Bundle extras = data.getExtras();
-//            imageBitmap = (Bitmap) extras.get("data");
-////            imageView.setImageBitmap(imageBitmap);
-//        }
-//    }
-
 }

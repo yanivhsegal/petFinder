@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.yaniv.petfinder.model.User;
+import com.yaniv.petfinder.model.UserFirebase;
 import com.yaniv.petfinder.model.UserModel;
 
 import java.util.Objects;
@@ -115,10 +116,14 @@ public class LoginFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            UserModel.instance.addUser(new User(
+                            User usr = new User(
                                     user.getUid(),
                                     user.getDisplayName(),
-                                    user.getPhotoUrl().toString()));
+                                    user.getPhotoUrl().toString());
+
+                            UserModel.instance.addUser(usr);
+                            UserFirebase.addUser(usr);
+
                             NavController navCtrl = Navigation.findNavController(view);
                             navCtrl.popBackStack();
                             navCtrl.navigate(LoginFragmentDirections.actionGlobalPetsListFragment(false));
@@ -155,10 +160,5 @@ public class LoginFragment extends Fragment {
         });
 
         return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
     }
 }

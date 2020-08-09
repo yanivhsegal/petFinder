@@ -27,35 +27,17 @@ public class PetFirebase {
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<Pet> stData = null;
+                List<Pet> ptData = null;
                 if (task.isSuccessful()) {
-                    stData = new LinkedList<Pet>();
+                    ptData = new LinkedList<Pet>();
                     for (QueryDocumentSnapshot doc : task.getResult()) {
                         Map<String, Object> json = doc.getData();
                         Pet pet = factory(json);
-                        stData.add(pet);
+                        ptData.add(pet);
                     }
                 }
-                listener.onComplete(stData);
-                Log.d("TAG", "refresh " + stData.size());
-            }
-        });
-    }
-
-    public static void getAllPets(final PetModel.Listener<List<Pet>> listener) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection(PET_COLLECTION).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<Pet> stData = null;
-                if (task.isSuccessful()) {
-                    stData = new LinkedList<Pet>();
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
-                        Pet pet = doc.toObject(Pet.class);
-                        stData.add(pet);
-                    }
-                }
-                listener.onComplete(stData);
+                listener.onComplete(ptData);
+                Log.d("TAG", "refresh " + ptData.size());
             }
         });
     }
@@ -77,12 +59,17 @@ public class PetFirebase {
         db.collection(PET_COLLECTION).document(petId).delete();
     }
 
+    public static void deleteAll() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(PET_COLLECTION).document().delete();
+    }
+
 
     private static Pet factory(Map<String, Object> json) {
         Pet pet = new Pet();
         pet.id = (String) json.get("id");
         pet.name = (String) json.get("name");
-        pet.imgUrl = (String) json.get("imgUrl");
+        pet.imgUrl = Converters.fromString((String) json.get("imgUrl"));
         pet.description = (String) json.get("description");
         pet.ownerId = (String) json.get("ownerId");
         Timestamp ts = (Timestamp) json.get("lastUpdated");

@@ -47,10 +47,11 @@ import java.util.List;
  */
 public class PetsListFragment extends Fragment {
     RecyclerView list;
-    List<Pet> data = new LinkedList<Pet>();
+    List<Pet> petsData = new LinkedList<Pet>();
+    List<User> usersData = new LinkedList<User>();
     PetsListAdapter adapter;
     PetListViewModel viewModel;
-    LiveData<List<Pet>> liveData;
+    LiveData<List<Pet>> livePetsData;
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
     boolean isPetsManagement;
@@ -91,7 +92,7 @@ public class PetsListFragment extends Fragment {
             parent = (Delegate) getActivity();
         } else {
             throw new RuntimeException(context.toString()
-                    + "pet list parent activity must implement dtudent ;list fragment Delegate");
+                    + "pet list parent activity must implement pet ;list fragment Delegate");
         }
         setHasOptionsMenu(true);
 
@@ -107,6 +108,11 @@ public class PetsListFragment extends Fragment {
         currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             ((HomeActivity) parent).navCtrl.navigate(PetsListFragmentDirections.actionPetsListFragmentToLoginFragment());
+        }
+
+        if (isPetsManagement) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("My Pets");
         }
 
 
@@ -133,17 +139,17 @@ public class PetsListFragment extends Fragment {
             @Override
             public void onClick(int position) {
                 Log.d("TAG", "row was clicked" + position);
-                Pet pet = data.get(position);
+                Pet pet = petsData.get(position);
                 parent.onItemSelected(pet);
             }
         });
 
-        liveData = viewModel.getPetsData(isPetsManagement, currentUser != null ? currentUser.getUid() : "");
+        livePetsData = viewModel.getPetsData(isPetsManagement, currentUser != null ? currentUser.getUid() : "");
 
-        liveData.observe(getViewLifecycleOwner(), new Observer<List<Pet>>() {
+        livePetsData.observe(getViewLifecycleOwner(), new Observer<List<Pet>>() {
             @Override
             public void onChanged(List<Pet> pets) {
-                data = pets;
+                petsData = pets;
                 adapter.notifyDataSetChanged();
             }
         });
@@ -176,6 +182,7 @@ public class PetsListFragment extends Fragment {
         ImageView userImage;
         TextView userName;
         ImageView delete;
+        ImageView edit;
         Pet pet;
         FragmentManager parentFragmentManager;
 
@@ -187,6 +194,7 @@ public class PetsListFragment extends Fragment {
             userImage = itemView.findViewById(R.id.row_user_image);
             userName = itemView.findViewById(R.id.row_user_name);
             delete = itemView.findViewById(R.id.row_delete);
+            edit = itemView.findViewById(R.id.row_edit);
             this.parentFragmentManager = parentFragmentManager;
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -207,13 +215,21 @@ public class PetsListFragment extends Fragment {
 
             if (!isPetsManagement) {
                 delete.setVisibility(View.GONE);
+                edit.setVisibility(View.GONE);
             } else {
                 delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Log.d("TAG", "fragment handle add menu");
                         AlertDialogFragment dialog = AlertDialogFragment.newInstance("Delete post", "Are you sure you want to delete post?", pt.id);
                         dialog.show(parentFragmentManager, "TAG");
+                    }
+                });
+                edit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        NavController navCtrl = Navigation.findNavController(view);
+                        NavDirections directions = NewPetFragmentDirections.actionGlobalNewPetFragment(pt);
+                        navCtrl.navigate(directions);
                     }
                 });
             }
@@ -282,30 +298,33 @@ public class PetsListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull PetRowViewHolder petRowViewHolder, int i) {
-            Pet pt = data.get(i);
+            Pet pt = petsData.get(i);
             petRowViewHolder.bind(pt, isPetsManagement);
         }
 
         @Override
         public int getItemCount() {
-            return data.size();
+            return petsData.size();
         }
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.pets_list_menu, menu);
+        if (!this.isPetsManagement) {
+            inflater.inflate(R.menu.pets_list_menu, menu);
+        }
     }
 
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        NavController navCtrl;
         switch (item.getItemId()) {
             case R.id.menu_pet_list_add:
                 Log.d("TAG", "fragment handle add menu");
-                NavController navCtrl = Navigation.findNavController(list);
-                NavDirections directions = NewPetFragmentDirections.actionGlobalNewPetFragment();
+                navCtrl = Navigation.findNavController(list);
+                NavDirections directions = NewPetFragmentDirections.actionGlobalNewPetFragment(null);
                 navCtrl.navigate(directions);
                 return true;
             case R.id.sign_out:

@@ -10,6 +10,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 public class StoreModel {
 
@@ -18,12 +19,12 @@ public class StoreModel {
         void onFail();
     }
 
-    public static void uploadImage(Bitmap imageBmp, String name, final Listener listener){
+    public static void uploadImages(List<Bitmap> imageBmp, String name, final Listener listener){
         if(imageBmp != null) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             final StorageReference imagesRef = storage.getReference().child("images").child(name);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            imageBmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            imageBmp.get(0).compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] data = baos.toByteArray();
             UploadTask uploadTask = imagesRef.putBytes(data);
             uploadTask.addOnFailureListener(new OnFailureListener() {

@@ -24,10 +24,6 @@ public class PetModel {
     }
 
     private PetModel() {
-//        for (int i=0;i<5;i++){
-//            Pet st = new Pet(""+i,"name"+1,null,false);
-//            addPet(st,null);
-//        }
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -59,6 +55,20 @@ public class PetModel {
                         long lastUpdated = 0;
                         for (Pet p : data) {
                             AppLocalDb.db.petDao().insertAll(p);
+                            UserFirebase.getUser(p.ownerId, new UserModel.Listener<User>() {
+                                @Override
+                                public void onComplete(User data) {
+                                    new AsyncTask<User, String, String>() {
+                                        @Override
+                                        protected String doInBackground(User... usr) {
+                                            if (usr[0] != null) {
+                                                AppLocalDb.db.usersDao().insertAll(usr[0]);
+                                            }
+                                            return "";
+                                        }
+                                    }.execute(data);
+                                }
+                            });
                             if (p.lastUpdated > lastUpdated) lastUpdated = p.lastUpdated;
                         }
                         SharedPreferences.Editor edit = MyApplication.context.getSharedPreferences("TAG", MODE_PRIVATE).edit();
@@ -108,6 +118,18 @@ public class PetModel {
                 return "";
             }
         }.execute(petId);
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    public void deleteAll() {
+        PetFirebase.deleteAll();
+        new AsyncTask<String, String, String>() {
+            @Override
+            protected String doInBackground(String... strings) {
+                AppLocalDb.db.petDao().deleteAll();
+                return "";
+            }
+        }.execute("");
     }
 
 

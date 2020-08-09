@@ -5,6 +5,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 @Entity
@@ -14,14 +15,14 @@ public class Pet implements Serializable {
     public String id;
     public String name;
     public String description;
-    public String imgUrl;
+    public List<String> imgUrl;
     public String ownerId;
     long lastUpdated;
 
     public Pet() {
     }
 
-    public Pet(String id, String name, String imgUrl, String description, String ownerId) {
+    public Pet(String id, String name, List<String> imgUrl, String description, String ownerId) {
         this.id = id;
         this.name = name;
         this.imgUrl = imgUrl;
@@ -37,10 +38,6 @@ public class Pet implements Serializable {
         this.name = name;
     }
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
-
     @NonNull
     public String getId() {
         return id;
@@ -48,10 +45,6 @@ public class Pet implements Serializable {
 
     public String getName() {
         return name;
-    }
-
-    public String getImgUrl() {
-        return imgUrl;
     }
 
     public void setLastUpdated(long lastUpdated) {
@@ -76,5 +69,13 @@ public class Pet implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<String> getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(List<String> imgUrl) {
+        this.imgUrl = imgUrl;
     }
 }

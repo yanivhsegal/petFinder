@@ -15,7 +15,6 @@ public class User implements Serializable {
     public String id;
     public String name;
     public String imageUrl;
-    long lastUpdated;
 
     public User() {
     }
@@ -42,14 +41,6 @@ public class User implements Serializable {
 
     public String getName() {
         return name;
-    }
-
-    public void setLastUpdated(long lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
-    public long getLastUpdated() {
-        return lastUpdated;
     }
 
     public String getImageUrl() {

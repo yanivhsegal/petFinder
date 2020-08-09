@@ -28,6 +28,7 @@ public class UserModel {
 
     @SuppressLint("StaticFieldLeak")
     public void addUser(User user) {
+        UserFirebase.addUser(user);
         new AsyncTask<User, String, String>() {
             @Override
             protected String doInBackground(User... user) {
@@ -42,23 +43,7 @@ public class UserModel {
         }.execute(user);
     }
 
-//    public LiveData<List<User>> getAllPets() {
-//        LiveData<List<Pet>> liveData = AppLocalDb.db.petDao().getAll();
-//        return liveData;
-//    }
-
-
     public User getUser(String id) {
         return AppLocalDb.db.usersDao().getUser(id);
     }
-
-    public void update(User user) {
-
-    }
-
-    public void delete(User user) {
-
-    }
-
-
 }

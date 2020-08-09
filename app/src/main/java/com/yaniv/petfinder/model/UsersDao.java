@@ -13,7 +13,10 @@ import java.util.List;
 @Dao
 public interface UsersDao {
     @Query("select * from User")
-    LiveData<List<User>> getAll();
+    LiveData<List<User>> getAllLive();
+
+    @Query("select * from User")
+    List<User> getAll();
 
     @Query("select * from User where id == :id")
     User getUser(String id);

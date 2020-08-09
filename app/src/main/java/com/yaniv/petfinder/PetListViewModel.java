@@ -15,12 +15,12 @@ public class PetListViewModel extends ViewModel {
     LiveData<List<Pet>> myPetsLiveData;
 
     public LiveData<List<Pet>> getPetsData(boolean isPetsManagement, String ownerId) {
-        if(!isPetsManagement) {
+        if (!isPetsManagement) {
             if (petsLiveData == null) {
                 petsLiveData = PetModel.instance.getAllPets();
             }
             return petsLiveData;
-        }else{
+        } else {
             if (myPetsLiveData == null) {
                 myPetsLiveData = PetModel.instance.getAllMyPets(ownerId);
             }
@@ -28,7 +28,7 @@ public class PetListViewModel extends ViewModel {
         }
     }
 
-    public void deleteById(String petId){
+    public void deleteById(String petId) {
         PetModel.instance.deleteById(petId);
     }
 
