@@ -260,8 +260,8 @@ public class PetsListFragment extends Fragment {
             name.setText(pt.name);
             description.setText(pt.description);
             pet = pt;
-            if (pt.imgUrl != null && pt.imgUrl != "") {
-                Picasso.get().load(pt.imgUrl).placeholder(R.drawable.avatar).into(image);
+            if (pt.imgUrl != null && pt.imgUrl.get(0) != "") {
+                Picasso.get().load(pt.imgUrl.get(0)).placeholder(R.drawable.avatar).into(image);
             } else {
                 image.setImageResource(R.drawable.avatar);
             }

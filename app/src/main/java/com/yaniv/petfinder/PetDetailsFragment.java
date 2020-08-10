@@ -40,7 +40,7 @@ public class PetDetailsFragment extends Fragment {
         petPhoto = view.findViewById(R.id.pet_photo);
 
         pet = PetDetailsFragmentArgs.fromBundle(getArguments()).getPet();
-        if (pet != null){
+        if (pet != null) {
             update_display();
         }
 
@@ -58,8 +58,8 @@ public class PetDetailsFragment extends Fragment {
     private void update_display() {
         name.setText(pet.name);
         description.setText(pet.description);
-        if (pet.imgUrl != null && pet.imgUrl != "") {
-            Picasso.get().load(pet.imgUrl).placeholder(R.drawable.avatar).into(petPhoto);
+        if (pet.imgUrl != null && pet.imgUrl.get(0) != "") {
+            Picasso.get().load(pet.imgUrl.get(0)).placeholder(R.drawable.avatar).into(petPhoto);
         } else {
             petPhoto.setImageResource(R.drawable.avatar);
         }

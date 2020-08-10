@@ -86,8 +86,8 @@ public class NewPetFragment extends Fragment {
         if (pet != null) {
             nameTv.setText(pet.name);
             description.setText(pet.description);
-            if (pet.imgUrl != null && pet.imgUrl != "") {
-                Picasso.get().load(pet.imgUrl).placeholder(R.drawable.avatar).into(imgaeView);
+            if (pet.imgUrl != null && pet.imgUrl.get(0) != "") {
+                Picasso.get().load(pet.imgUrl.get(0)).placeholder(R.drawable.avatar).into(imgaeView);
             }
         }
 
@@ -103,9 +103,9 @@ public class NewPetFragment extends Fragment {
         if (imageBitmap != null) {
             StoreModel.uploadImages(imageBitmap, "my_photo" + d.getTime(), new StoreModel.Listener() {
                 @Override
-                public void onSuccess(String url) {
-                    Log.d("TAG", "url: " + url);
-                    Pet pt = new Pet(id, name, url, desc, mAuth.getCurrentUser().getUid());
+                public void onSuccess(List<String> uris) {
+                    Log.d("TAG", "url: " + uris.get(0));
+                    Pet pt = new Pet(id, name, uris, desc, mAuth.getCurrentUser().getUid());
                     PetModel.instance.addPet(pt, new PetModel.Listener<Boolean>() {
                         @Override
                         public void onComplete(Boolean data) {
