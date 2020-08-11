@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -24,6 +25,7 @@ public class PetDetailsFragment extends Fragment {
     TextView name;
     TextView description;
     ImageView petPhoto;
+    
 
     public PetDetailsFragment() {
         // Required empty public constructor
@@ -38,6 +40,22 @@ public class PetDetailsFragment extends Fragment {
         name = view.findViewById(R.id.pet_details_name);
         description = view.findViewById(R.id.pet_details_description);
         petPhoto = view.findViewById(R.id.pet_photo);
+
+        AppCompatImageButton backButton = view.findViewById(R.id.pet_detail_image_back);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        AppCompatImageButton nextButton = view.findViewById(R.id.pet_detail_image_next);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         pet = PetDetailsFragmentArgs.fromBundle(getArguments()).getPet();
         if (pet != null) {

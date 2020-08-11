@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -45,6 +46,7 @@ public class NewPetFragment extends Fragment {
         // Required empty public constructor
     }
 
+    int currentImageIndex = 0;
     Pet pet;
     View view;
     ImageView imgaeView;
@@ -65,11 +67,18 @@ public class NewPetFragment extends Fragment {
         progressbr = view.findViewById(R.id.new_pet_progress);
         progressbr.setVisibility(View.INVISIBLE);
         imgaeView = view.findViewById(R.id.new_pet_image_v);
-        Button takePhBtn = view.findViewById(R.id.new_pet_take_photo_btn);
-        takePhBtn.setOnClickListener(new View.OnClickListener() {
+        Button uploadFromGalleryBtn = view.findViewById(R.id.new_pet_upload_from_gallery);
+        uploadFromGalleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 uploadFromGallery();
+            }
+        });
+        Button takePhotoBtn = view.findViewById(R.id.new_pet_take_photo_btn);
+        takePhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                takePhoto();
             }
         });
         nameTv = view.findViewById(R.id.new_pet_name_tv);
@@ -80,6 +89,58 @@ public class NewPetFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 savePet();
+            }
+        });
+
+        AppCompatImageButton imageBack = view.findViewById(R.id.image_back_btn);
+        imageBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (imageBitmap.size() != 0) {
+                    if (currentImageIndex == 0) {
+                        currentImageIndex = imageBitmap.size() - 1;
+                    } else {
+                        currentImageIndex--;
+                    }
+
+                    imgaeView.setImageBitmap(imageBitmap.get(currentImageIndex));
+
+                } else if (pet != null && pet.imgUrl != null) {
+                    if (currentImageIndex == 0) {
+                        currentImageIndex = pet.imgUrl.size() - 1;
+                    } else {
+                        currentImageIndex--;
+                    }
+                    if (!pet.imgUrl.get(currentImageIndex).equals("")) {
+                        Picasso.get().load(pet.imgUrl.get(currentImageIndex)).placeholder(R.drawable.avatar).into(imgaeView);
+                    }
+                }
+            }
+        });
+
+        AppCompatImageButton imageNext = view.findViewById(R.id.image_next_btn);
+        imageNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (imageBitmap.size() != 0) {
+                    if (currentImageIndex == imageBitmap.size() - 1) {
+                        currentImageIndex = 0;
+                    } else {
+                        currentImageIndex++;
+                    }
+
+                    imgaeView.setImageBitmap(imageBitmap.get(currentImageIndex));
+
+                } else if (pet != null && pet.imgUrl != null) {
+                    if (currentImageIndex == pet.imgUrl.size() - 1) {
+                        currentImageIndex = 0;
+                    } else {
+                        currentImageIndex++;
+                    }
+                    if (!pet.imgUrl.get(currentImageIndex).equals("")) {
+                        Picasso.get().load(pet.imgUrl.get(currentImageIndex)).placeholder(R.drawable.avatar).into(imgaeView);
+                    }
+                }
             }
         });
 
@@ -100,11 +161,10 @@ public class NewPetFragment extends Fragment {
         final String desc = description.getText().toString();
         final String id = pet != null && !pet.getId().equals("") ? pet.getId() : UUID.randomUUID().toString();
         Date d = new Date();
-        if (imageBitmap != null) {
+        if (imageBitmap != null && imageBitmap.size() != 0) {
             StoreModel.uploadImages(imageBitmap, "my_photo" + d.getTime(), new StoreModel.Listener() {
                 @Override
                 public void onSuccess(List<String> uris) {
-                    Log.d("TAG", "url: " + uris.get(0));
                     Pet pt = new Pet(id, name, uris, desc, mAuth.getCurrentUser().getUid());
                     PetModel.instance.addPet(pt, new PetModel.Listener<Boolean>() {
                         @Override
@@ -173,7 +233,7 @@ public class NewPetFragment extends Fragment {
 
             for (Uri imageUri : imagesUri) {
                 try {
-                    imageBitmap.add(MediaStore.Images.Media.getBitmap(view.getContext().getContentResolver(), imageUri));
+                    imageBitmap.add(rotateImage(MediaStore.Images.Media.getBitmap(view.getContext().getContentResolver(), imageUri)));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

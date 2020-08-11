@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class PetFirebase {
         Pet pet = new Pet();
         pet.id = (String) json.get("id");
         pet.name = (String) json.get("name");
-        pet.imgUrl = Converters.fromString((String) json.get("imgUrl"));
+        pet.imgUrl = (ArrayList<String>) json.get("imgUrl");
         pet.description = (String) json.get("description");
         pet.ownerId = (String) json.get("ownerId");
         Timestamp ts = (Timestamp) json.get("lastUpdated");
@@ -87,5 +88,4 @@ public class PetFirebase {
         result.put("lastUpdated", FieldValue.serverTimestamp());
         return result;
     }
-
 }

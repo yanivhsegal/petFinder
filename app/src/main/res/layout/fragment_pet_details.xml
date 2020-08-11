@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/pet_details_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,11 +29,11 @@
 
         <ImageView
             android:id="@+id/pet_photo"
-            android:layout_width="384dp"
+            android:layout_width="0"
             android:layout_height="270dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="50dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="50dp"
             android:src="@drawable/avatar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,5 +66,31 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pet_photo" />
+
+        <ImageButton
+            android:id="@+id/pet_detail_image_back"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="4dp"
+            android:background="@color/cardview_shadow_end_color"
+            app:layout_constraintBottom_toBottomOf="@+id/pet_photo"
+            app:layout_constraintEnd_toStartOf="@+id/pet_photo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/pet_photo"
+            app:srcCompat="@drawable/back" />
+
+        <ImageButton
+            android:id="@+id/pet_detail_image_next"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/cardview_shadow_end_color"
+            app:layout_constraintBottom_toBottomOf="@+id/pet_photo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pet_photo"
+            app:layout_constraintTop_toTopOf="@+id/pet_photo"
+            app:srcCompat="@drawable/next" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
