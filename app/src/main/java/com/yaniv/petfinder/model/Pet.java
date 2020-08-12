@@ -19,17 +19,19 @@ public class Pet implements Serializable {
     public String description;
     public List<String> imgUrl;
     public String ownerId;
+    public Enum<PetTypes> petType;
     long lastUpdated;
 
     public Pet() {
     }
 
-    public Pet(String id, String name, List<String> imgUrl, String description, String ownerId) {
+    public Pet(String id, String name, List<String> imgUrl, String description, String ownerId, Enum<PetTypes> petType) {
         this.id = id;
         this.name = name;
         this.imgUrl = imgUrl;
         this.description = description;
         this.ownerId = ownerId;
+        this.petType = petType;
     }
 
     public void setId(@NonNull String id) {
@@ -79,5 +81,13 @@ public class Pet implements Serializable {
 
     public void setImgUrl(List<String> imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    public Enum<PetTypes> getPetType() {
+        return petType;
+    }
+
+    public void setPetType(Enum<PetTypes> petType) {
+        this.petType = petType;
     }
 }

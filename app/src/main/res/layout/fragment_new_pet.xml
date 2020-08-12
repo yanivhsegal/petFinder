@@ -3,9 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".NewPetFragment">
-
 
     <Button
         android:id="@+id/new_pet_take_photo_btn"
@@ -61,18 +60,19 @@
         app:layout_constraintTop_toTopOf="@+id/textView5"
         app:layout_constraintVertical_bias="0.533" />
 
-    <ImageView
-        android:id="@+id/new_pet_image_v"
-        android:layout_width="284dp"
-        android:layout_height="233dp"
-        android:layout_marginTop="16dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/avatar"
-        app:layout_constraintDimensionRatio="w,3:4"
+    <EditText
+        android:id="@+id/new_pet_description"
+        android:layout_width="0dp"
+        android:layout_height="84dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textLongMessage|textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/new_pet_name_tv" />
 
     <ImageButton
         android:id="@+id/image_next_btn"
@@ -89,6 +89,32 @@
         app:layout_constraintTop_toTopOf="@+id/new_pet_image_v"
         app:layout_constraintVertical_bias="1.0" />
 
+    <ImageButton
+        android:id="@+id/image_back_btn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="4dp"
+        android:background="@color/cardview_light_background"
+        android:src="@drawable/back"
+        app:layout_constraintBottom_toBottomOf="@+id/new_pet_image_v"
+        app:layout_constraintEnd_toStartOf="@+id/new_pet_image_v"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/new_pet_image_v" />
+
+    <ImageView
+        android:id="@+id/new_pet_image_v"
+        android:layout_width="284dp"
+        android:layout_height="233dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/avatar"
+        app:layout_constraintDimensionRatio="w,3:4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ProgressBar
         android:id="@+id/new_pet_progress"
         style="?android:attr/progressBarStyle"
@@ -99,6 +125,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/petTypeSpinner"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="80dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/new_pet_save_btn"
+        app:layout_constraintEnd_toStartOf="@+id/new_pet_save_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/new_pet_save_btn" />
 
     <TextView
         android:id="@+id/textView6"
@@ -122,31 +161,4 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/new_pet_take_photo_btn" />
-
-    <EditText
-        android:id="@+id/new_pet_description"
-        android:layout_width="0dp"
-        android:layout_height="84dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="56dp"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:gravity="start|top"
-        android:inputType="textLongMessage|textMultiLine"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_pet_name_tv" />
-
-    <ImageButton
-        android:id="@+id/image_back_btn"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="4dp"
-        android:background="@color/cardview_light_background"
-        android:src="@drawable/back"
-        app:layout_constraintBottom_toBottomOf="@+id/new_pet_image_v"
-        app:layout_constraintEnd_toStartOf="@+id/new_pet_image_v"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/new_pet_image_v" />
 </androidx.constraintlayout.widget.ConstraintLayout>

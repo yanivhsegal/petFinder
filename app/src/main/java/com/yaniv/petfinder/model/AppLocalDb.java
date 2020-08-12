@@ -7,7 +7,7 @@ import androidx.room.TypeConverters;
 
 import com.yaniv.petfinder.MyApplication;
 
-@Database(entities = {Pet.class, User.class}, version = 15)
+@Database(entities = {Pet.class, User.class}, version = 16)
 @TypeConverters({Converters.class})
 abstract class AppLocalDbRepository extends RoomDatabase {
     public abstract PetsDao petDao();

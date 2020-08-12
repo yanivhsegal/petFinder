@@ -25,7 +25,8 @@ public class PetDetailsFragment extends Fragment {
     TextView name;
     TextView description;
     ImageView petPhoto;
-    
+    int currentImageIndex = 0;
+
 
     public PetDetailsFragment() {
         // Required empty public constructor
@@ -45,15 +46,33 @@ public class PetDetailsFragment extends Fragment {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (pet != null && pet.imgUrl != null) {
+                    if (currentImageIndex == 0) {
+                        currentImageIndex = pet.imgUrl.size() - 1;
+                    } else {
+                        currentImageIndex--;
+                    }
+                    if (!pet.imgUrl.get(currentImageIndex).equals("")) {
+                        Picasso.get().load(pet.imgUrl.get(currentImageIndex)).placeholder(R.drawable.avatar).into(petPhoto);
+                    }
+                }
             }
         });
 
         AppCompatImageButton nextButton = view.findViewById(R.id.pet_detail_image_next);
-        backButton.setOnClickListener(new View.OnClickListener() {
+        nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (pet != null && pet.imgUrl != null) {
+                    if (currentImageIndex == pet.imgUrl.size() - 1) {
+                        currentImageIndex = 0;
+                    } else {
+                        currentImageIndex++;
+                    }
+                    if (!pet.imgUrl.get(currentImageIndex).equals("")) {
+                        Picasso.get().load(pet.imgUrl.get(currentImageIndex)).placeholder(R.drawable.avatar).into(petPhoto);
+                    }
+                }
             }
         });
 

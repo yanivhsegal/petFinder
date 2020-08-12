@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -313,6 +312,7 @@ public class PetsListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         if (!this.isPetsManagement) {
             inflater.inflate(R.menu.pets_list_menu, menu);
+            //TODO:add contextMenu
         }
     }
 
@@ -333,6 +333,9 @@ public class PetsListFragment extends Fragment {
                 return true;
             case R.id.manage_pets:
                 parent.onManageMyPets();
+                return true;
+            case R.id.menu_pet_list_search:
+
                 return true;
         }
         return super.onOptionsItemSelected(item);

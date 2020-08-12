@@ -73,6 +73,7 @@ public class PetFirebase {
         pet.imgUrl = (ArrayList<String>) json.get("imgUrl");
         pet.description = (String) json.get("description");
         pet.ownerId = (String) json.get("ownerId");
+        pet.petType = PetTypes.valueOf((String) json.get("petType"));
         Timestamp ts = (Timestamp) json.get("lastUpdated");
         if (ts != null) pet.lastUpdated = ts.getSeconds();
         return pet;
@@ -85,6 +86,7 @@ public class PetFirebase {
         result.put("imgUrl", pt.imgUrl);
         result.put("description", pt.description);
         result.put("ownerId", pt.ownerId);
+        result.put("petType", pt.petType.name());
         result.put("lastUpdated", FieldValue.serverTimestamp());
         return result;
     }

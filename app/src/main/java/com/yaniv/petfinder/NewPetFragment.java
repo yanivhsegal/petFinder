@@ -10,9 +10,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -24,12 +26,14 @@ import androidx.navigation.Navigation;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
+import com.yaniv.petfinder.model.PetTypes;
 import com.yaniv.petfinder.model.StoreModel;
 import com.yaniv.petfinder.model.Pet;
 import com.yaniv.petfinder.model.PetModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -52,6 +56,8 @@ public class NewPetFragment extends Fragment {
     ImageView imgaeView;
     TextView nameTv;
     TextView description;
+    Spinner petTypeSpinner;
+    ArrayAdapter<String> spinnerAdapter;
     List<Bitmap> imageBitmap = new ArrayList<>();
     ProgressBar progressbr;
     FirebaseAuth mAuth;
@@ -67,6 +73,12 @@ public class NewPetFragment extends Fragment {
         progressbr = view.findViewById(R.id.new_pet_progress);
         progressbr.setVisibility(View.INVISIBLE);
         imgaeView = view.findViewById(R.id.new_pet_image_v);
+        petTypeSpinner = view.findViewById(R.id.petTypeSpinner);
+        String[] items = Arrays.toString(PetTypes.class.getEnumConstants()).replaceAll("^.|.$", "").split(", ");
+        spinnerAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                items);
+        petTypeSpinner.setAdapter(spinnerAdapter);
         Button uploadFromGalleryBtn = view.findViewById(R.id.new_pet_upload_from_gallery);
         uploadFromGalleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +162,7 @@ public class NewPetFragment extends Fragment {
             if (pet.imgUrl != null && pet.imgUrl.get(0) != "") {
                 Picasso.get().load(pet.imgUrl.get(0)).placeholder(R.drawable.avatar).into(imgaeView);
             }
+            petTypeSpinner.setSelection(pet.petType.ordinal());
         }
 
         return view;
@@ -165,7 +178,7 @@ public class NewPetFragment extends Fragment {
             StoreModel.uploadImages(imageBitmap, "my_photo" + d.getTime(), new StoreModel.Listener() {
                 @Override
                 public void onSuccess(List<String> uris) {
-                    Pet pt = new Pet(id, name, uris, desc, mAuth.getCurrentUser().getUid());
+                    Pet pt = new Pet(id, name, uris, desc, mAuth.getCurrentUser().getUid(), PetTypes.valueOf((String) petTypeSpinner.getSelectedItem()));
                     PetModel.instance.addPet(pt, new PetModel.Listener<Boolean>() {
                         @Override
                         public void onComplete(Boolean data) {
@@ -182,8 +195,8 @@ public class NewPetFragment extends Fragment {
                     mySnackBar.show();
                 }
             });
-        } else {
-            Pet pt = new Pet(id, name, pet.imgUrl, desc, mAuth.getCurrentUser().getUid());
+        } else if (pet != null) {
+            Pet pt = new Pet(id, name, pet.imgUrl, desc, mAuth.getCurrentUser().getUid(), PetTypes.valueOf((String) petTypeSpinner.getSelectedItem()));
             PetModel.instance.addPet(pt, new PetModel.Listener<Boolean>() {
                 @Override
                 public void onComplete(Boolean data) {
@@ -191,6 +204,10 @@ public class NewPetFragment extends Fragment {
                     navCtrl.navigateUp();
                 }
             });
+        } else {
+            progressbr.setVisibility(View.INVISIBLE);
+            Snackbar mySnackBar = Snackbar.make(view, R.string.fail_to_save_pet, Snackbar.LENGTH_LONG);
+            mySnackBar.show();
         }
     }
 
@@ -222,7 +239,7 @@ public class NewPetFragment extends Fragment {
                 resultCode == RESULT_OK) {
             if (data.getExtras() != null) {
                 Bundle extras = data.getExtras();
-                imageBitmap.add(rotateImage((Bitmap) extras.get("data")));
+                imageBitmap.add((Bitmap) extras.get("data"));
             } else if (data.getClipData() != null) {
                 for (int i = 0; i < data.getClipData().getItemCount(); i++) {
                     imagesUri.add(data.getClipData().getItemAt(i).getUri());
@@ -233,7 +250,7 @@ public class NewPetFragment extends Fragment {
 
             for (Uri imageUri : imagesUri) {
                 try {
-                    imageBitmap.add(rotateImage(MediaStore.Images.Media.getBitmap(view.getContext().getContentResolver(), imageUri)));
+                    imageBitmap.add(MediaStore.Images.Media.getBitmap(view.getContext().getContentResolver(), imageUri));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -241,12 +258,5 @@ public class NewPetFragment extends Fragment {
 
             imgaeView.setImageBitmap(imageBitmap.get(0));
         }
-    }
-
-    public static Bitmap rotateImage(Bitmap source) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
-                matrix, true);
     }
 }

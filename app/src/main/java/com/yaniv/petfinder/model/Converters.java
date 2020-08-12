@@ -23,4 +23,14 @@ class Converters {
         String json = gson.toJson(list);
         return json;
     }
+
+    @TypeConverter
+    public static String fromEnum(Enum<PetTypes> petTypesEnum) {
+        return petTypesEnum.name();
+    }
+
+    @TypeConverter
+    public static Enum<PetTypes> fromInt(String petType) {
+        return PetTypes.valueOf(petType);
+    }
 }

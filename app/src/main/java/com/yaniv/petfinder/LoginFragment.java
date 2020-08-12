@@ -66,6 +66,7 @@ public class LoginFragment extends Fragment {
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
+        mGoogleSignInClient.signOut();
         mAuth = FirebaseAuth.getInstance();
 
     }
@@ -85,7 +86,6 @@ public class LoginFragment extends Fragment {
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w("TAG", "Google sign in failed", e);
-                // ...
             }
         }
     }
@@ -144,11 +144,6 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_login, container, false);
-//        savedStateHandle = Navigation.findNavController(getParentFragment().requireView())
-//                .getPreviousBackStackEntry()
-//                .getSavedStateHandle();
-//        savedStateHandle.set("LOGIN_SUCCESSFUL", false);
-
 
         Button takePhBtn = view.findViewById(R.id.loginButton);
 
