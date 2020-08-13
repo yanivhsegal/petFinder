@@ -3,6 +3,7 @@ package com.yaniv.petfinder;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Icon;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +13,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +24,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
@@ -34,9 +38,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.yaniv.petfinder.model.Pet;
 import com.yaniv.petfinder.model.PetModel;
 import com.squareup.picasso.Picasso;
+import com.yaniv.petfinder.model.PetTypes;
 import com.yaniv.petfinder.model.User;
 import com.yaniv.petfinder.model.UserModel;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -53,7 +59,9 @@ public class PetsListFragment extends Fragment {
     LiveData<List<Pet>> livePetsData;
     FirebaseAuth mAuth;
     FirebaseUser currentUser;
+    ImageButton searchButton;
     boolean isPetsManagement;
+    View view;
 
     interface Delegate {
         void onItemSelected(Pet pet);
@@ -102,7 +110,7 @@ public class PetsListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_pets_list, container, false);
+        view = inflater.inflate(R.layout.fragment_pets_list, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
@@ -307,12 +315,59 @@ public class PetsListFragment extends Fragment {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         if (!this.isPetsManagement) {
             inflater.inflate(R.menu.pets_list_menu, menu);
-            //TODO:add contextMenu
+            searchButton = (ImageButton) menu.findItem(R.id.menu_pet_list_search).getActionView();
+            searchButton.setImageResource(R.drawable.search);
+            searchButton.setBackground(null);
+            searchButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PopupMenu popup = new PopupMenu(getContext(), view);
+                    popup.getMenuInflater()
+                            .inflate(R.menu.search_by_menu, popup.getMenu());
+                    String[] types = Arrays.toString(PetTypes.class.getEnumConstants()).replaceAll("^.|.$", "").split(", ");
+                    for (String type : types) {
+                        popup.getMenu().add(0, 10000000 + PetTypes.valueOf(type).ordinal(), PetTypes.valueOf(type).ordinal() + 1, type);
+                    }
+                    popup.getMenu().add(0, 10000000, 0,"Show all types");
+                    popup.show();
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            new AsyncTask<String, String, List<Pet>>() {
+
+                                @Override
+                                protected List<Pet> doInBackground(String... strings) {
+                                    try{
+                                        PetTypes petType = PetTypes.valueOf(strings[0]);
+                                        petsData = PetModel.instance.getAllPetsByType(PetTypes.valueOf(strings[0]));
+                                    }catch(Exception e){
+                                        viewModel.refresh(new PetModel.CompListener() {
+                                            @Override
+                                            public void onComplete() {
+                                                return;
+                                            }
+                                        });
+                                    }
+                                    return petsData;
+                                }
+
+                                @Override
+                                protected void onPostExecute(List<Pet> pets) {
+                                    super.onPostExecute(pets);
+                                    adapter.notifyDataSetChanged();
+                                }
+                            }.execute(menuItem.getTitle().toString());
+                            return true;
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -335,7 +390,6 @@ public class PetsListFragment extends Fragment {
                 parent.onManageMyPets();
                 return true;
             case R.id.menu_pet_list_search:
-
                 return true;
         }
         return super.onOptionsItemSelected(item);

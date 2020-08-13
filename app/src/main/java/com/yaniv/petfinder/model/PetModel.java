@@ -99,6 +99,11 @@ public class PetModel {
         return liveData;
     }
 
+    public List<Pet> getAllPetsByType(PetTypes type) {
+        List<Pet> data = AppLocalDb.db.petDao().getAllPetsByType(type);
+        return data;
+    }
+
 
     public Pet getPet(String id) {
         return null;

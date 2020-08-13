@@ -29,4 +29,7 @@ public interface PetsDao {
 
     @Query("select * from Pet where ownerId = :ownerId")
     LiveData<List<Pet>> getAllByOwnerId(String ownerId);
+
+    @Query("select * from Pet where petType = :type")
+    List<Pet> getAllPetsByType(PetTypes type);
 }

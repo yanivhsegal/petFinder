@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.yaniv.petfinder.model.Pet;
 import com.yaniv.petfinder.model.PetModel;
+import com.yaniv.petfinder.model.PetTypes;
 import com.yaniv.petfinder.model.User;
 import com.yaniv.petfinder.model.UserModel;
 

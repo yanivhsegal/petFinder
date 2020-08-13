@@ -8,12 +8,12 @@
         android:icon="?android:attr/actionModeWebSearchDrawable"
         android:title="@android:string/search_go"
         app:showAsAction="always"
-        tools:context="com.yaniv.petfinder.HomeActivity" />
+        app:actionViewClass="android.widget.ImageButton" />
     <item
         android:id="@+id/menu_pet_list_add"
         android:icon="@android:drawable/ic_input_add"
         android:title="Add"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/manage_pets"
         android:icon="@drawable/signout"
